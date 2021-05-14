@@ -6,7 +6,7 @@
     "Victor Homyakov <vkhomyackov@gmail.com> (https://github.com/victor-homyakov)",
     "Oliver Salzburg (https://github.com/oliversalzburg)"
   ],
-  "version": "3.0.2",
+  "version": "3.0.4",
   "license": "MIT",
   "keywords": [
     "stacktrace",
@@ -20,38 +20,30 @@
   },
   "dependencies": {
     "source-map": "0.5.6",
-    "stackframe": "^1.0.4"
+    "stackframe": "^1.1.1"
   },
   "devDependencies": {
-    "colors": "^1.1.2",
-    "del": "^2.2.0",
     "es6-promise": "^3.0.2",
-    "gulp": "^4.0.2",
-    "gulp-concat": "^2.6.0",
-    "gulp-coveralls": "^0.1.4",
-    "gulp-jshint": "^2.0.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "^1.5.1",
+    "eslint": "^6.8.0",
     "jasmine": "^2.7.0",
     "jasmine-ajax": "^3.3.1",
     "jasmine-core": "^2.7.0",
-    "jshint": "^2.8.0",
-    "karma": "^1.7.0",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-coverage": "^1.1.1",
-    "karma-firefox-launcher": "^1.0.1",
+    "karma": "^4.4.1",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.1",
+    "karma-coveralls": "^2.1.0",
+    "karma-firefox-launcher": "^1.2.0",
     "karma-ie-launcher": "^1.0.0",
-    "karma-jasmine": "^1.1.0",
+    "karma-jasmine": "^1.1.2",
     "karma-jasmine-ajax": "^0.1.13",
     "karma-opera-launcher": "^1.0.0",
-    "karma-phantomjs2-launcher": "^0.5.0",
+    "karma-phantomjs-launcher": "^1.0.4",
     "karma-safari-launcher": "^1.0.0",
-    "karma-sauce-launcher": "^1.1.0",
-    "karma-spec-reporter": "^0.0.31",
-    "natives": "^1.1.6",
+    "karma-sauce-launcher": "^2.0.2",
+    "karma-spec-reporter": "^0.0.32",
     "run-sequence": "^1.1.4",
-    "webpack": "^1.12.9"
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   },
   "bugs": {
     "url": "https://github.com/stacktracejs/stacktrace-gps/issues"
@@ -65,7 +57,10 @@
     "node_modules/source-map/"
   ],
   "scripts": {
-    "test": "gulp test",
-    "prepublish": "gulp dist"
+    "lint": "eslint --fix stacktrace-gps.js spec/",
+    "prepare": "cp stacktrace-gps.js polyfills.js dist/ && ./node_modules/.bin/webpack --mode production && uglifyjs node_modules/stackframe/stackframe.js ./build/bundle.js stacktrace-gps.js -o dist/stacktrace-gps.min.js --compress --mangle --source-map \"url=stacktrace-gps.min.js.map\" && uglifyjs node_modules/es6-promise/dist/es6-promise.js polyfills.js node_modules/stackframe/stackframe.js build/bundle.js stacktrace-gps.js -o dist/stacktrace-gps-with-polyfills.min.js --compress --mangle --source-map \"url=stacktrace-gps-polyfilled.min.js.map\"",
+    "test": "karma start karma.conf.js --single-run",
+    "test-pr": "karma start karma.conf.js --single-run --browsers Firefox,Chrome_Travis",
+    "test-ci": "karma start karma.conf.ci.js --single-run"
   }
 }

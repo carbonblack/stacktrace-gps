@@ -129,12 +129,16 @@
         var sourceMappingUrlRegExp = /\/\/[#@] ?sourceMappingURL=([^\s'"]+)\s*$/mg;
         var lastSourceMappingUrl;
         var matchSourceMappingUrl;
-        while (matchSourceMappingUrl = sourceMappingUrlRegExp.exec(source)) { // jshint ignore:line
+        // eslint-disable-next-line no-cond-assign
+        while (matchSourceMappingUrl = sourceMappingUrlRegExp.exec(source)) {
             lastSourceMappingUrl = matchSourceMappingUrl[1];
         }
         if (lastSourceMappingUrl) {
             return lastSourceMappingUrl;
         } else {
+            // in upstream, this else block just throws an error 
+            // our prod webpack config uses `devtool: 'hidden-source-map'`, so prod error logs will never find a regex match
+            // instead, since we know the pattern that our maps follow, we'll assemble the path to our maps from the filename here
             var file = fileName.substr(fileName.lastIndexOf('/') + 1, fileName.length);
             return file + '.map';
         }
@@ -233,7 +237,7 @@
          * @returns {Promise} that resolves a SourceMapConsumer
          */
         this._getSourceMapConsumer = function _getSourceMapConsumer(sourceMappingURL, defaultSourceRoot) {
-            return new Promise(function(resolve, reject) {
+            return new Promise(function(resolve) {
                 if (this.sourceMapConsumerCache[sourceMappingURL]) {
                     resolve(this.sourceMapConsumerCache[sourceMappingURL]);
                 } else {
@@ -247,7 +251,7 @@
                             }
 
                             resolve(new SourceMap.SourceMapConsumer(sourceMapSource));
-                        }, reject);
+                        }).catch(reject);
                     }.bind(this));
                     this.sourceMapConsumerCache[sourceMappingURL] = sourceMapConsumerPromise;
                     resolve(sourceMapConsumerPromise);
@@ -271,6 +275,7 @@
 
                     this.findFunctionName(mappedStackFrame)
                         .then(resolve, resolveMappedStackFrame)
+                        // eslint-disable-next-line no-unexpected-multiline
                         ['catch'](resolveMappedStackFrame);
                 }.bind(this), reject);
             }.bind(this));
@@ -331,8 +336,8 @@
                         .then(function(sourceMapConsumer) {
                             return _extractLocationInfoFromSourceMapSource(stackframe, sourceMapConsumer, sourceCache)
                                 .then(resolve)['catch'](function() {
-                                resolve(stackframe);
-                            });
+                                    resolve(stackframe);
+                                });
                         });
                 }.bind(this), reject)['catch'](reject);
             }.bind(this));
