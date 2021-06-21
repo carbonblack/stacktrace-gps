@@ -15,12 +15,12 @@ module.exports = function(config) {
         logLevel: config.LOG_INFO,
         autoWatch: true,
         customLaunchers: {
-            ChromeTravis: {
+            Chrome_Travis: {
                 base: 'Chrome',
                 flags: ['--no-sandbox']
             }
         },
-        browsers: ['PhantomJS2'],
+        browsers: ['PhantomJS'],
         singleRun: false
     });
 };
