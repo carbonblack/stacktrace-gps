@@ -16,7 +16,7 @@
   "homepage": "https://www.stacktracejs.com",
   "repository": {
     "type": "git",
-    "url": "git://github.com/stacktracejs/stacktrace-gps.git"
+    "url": "git://github.com/carbonblack/stacktrace-gps.git"
   },
   "dependencies": {
     "source-map": "0.5.6",
